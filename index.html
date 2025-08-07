@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>安全巡視チェックシステム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Hiragino Sans', sans-serif;
+            width: 375px;
+            margin: 0 auto;
+            background: #f0f0f3;
+            color: #333;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* ヘッダー */
+        .header {
+            background: linear-gradient(135deg, #2c5aa8 0%, #4a90e2 100%);
+            color: white;
+            padding: 44px 16px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        /* 画面コンテナ */
+        .screen {
+            display: none;
+            padding: 16px;
+            animation: slideIn 0.3s ease-out;
+            min-height: calc(100vh - 80px);
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* カード */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* フォーム要素 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        label.required::after {
+            content: ' *';
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.2s;
+            min-height: 44px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* ボタン */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 44px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4a90e2, #2c5aa8);
+            color: white;
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #4a90e2;
+            border: 2px solid #4a90e2;
+        }
+
+        .btn-secondary:active {
+            background: #f0f8ff;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* 作業者リスト */
+        .worker-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .worker-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .worker-item input {
+            flex: 1;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .worker-remove {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* チェックリスト */
+        .checklist-item {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            min-height: 60px;
+        }
+
+        .checklist-item:active {
+            transform: scale(0.98);
+            background: #f8f9fa;
+        }
+
+        .checklist-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .checklist-checkbox.checked {
+            background: #4a90e2;
+            border-color: #4a90e2;
+        }
+
+        .checklist-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+
+        .checklist-name {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .checklist-status {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .status-pending {
+            background: #f0f0f3;
+            color: #999;
+        }
+
+        .status-progress {
+            background: #f39c12;
+            color: white;
+        }
+
+        .status-complete {
+            background: #27ae60;
+            color: white;
+        }
+
+        /* ツールバー */
+        .toolbar {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .toolbar-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+            min-height: 60px;
+            justify-content: center;
+        }
+
+        .toolbar-btn:active {
+            background: #f0f8ff;
+            border-color: #4a90e2;
+        }
+
+        .toolbar-icon {
+            font-size: 20px;
+        }
+
+        .toolbar-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* チェック項目 */
+        .check-category {
+            background: #2c5aa8;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 16px 0 8px;
+        }
+
+        .check-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .check-item-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .check-item-text {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .info-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .check-options {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .check-option {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .check-option.selected-ok {
+            background: #27ae60;
+            border-color: #27ae60;
+            color: white;
+        }
+
+        .check-option.selected-warning {
+            background: #f39c12;
+            border-color: #f39c12;
+            color: white;
+        }
+
+        .check-option.selected-ng {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            color: white;
+        }
+
+        .note-btn {
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 6px;
+            color: #856404;
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Tips */
+        .tips-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+        }
+
+        .tips-title {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .tips-content {
+            font-size: 12px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* 指摘一覧 */
+        .issue-table {
+            width: 100%;
+            font-size: 12px;
+            border-collapse: collapse;
+        }
+
+        .issue-table th {
+            background: #f0f0f3;
+            padding: 8px 4px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .issue-table td {
+            padding: 8px 4px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .issue-table input,
+        .issue-table select {
+            width: 100%;
+            padding: 4px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .delete-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* モーダル */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            animation: fadeIn 0.2s;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            width: 90%;
+            max-width: 340px;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        /* プログレスバー */
+        .progress-bar {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4a90e2, #2c5aa8);
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        /* フローティングアクションボタン */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: calc(50% - 175px);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 90;
+            transition: all 0.2s;
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+        }
+
+        /* アニメーション */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 0.5s;
+        }
+
+        /* バッジ */
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 10px;
+            background: #e74c3c;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 18px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <div class="header">
+        <h1>
+            <span>🔍</span>
+            <span>安全巡視チェックシステム</span>
+        </h1>
+        <div class="header-subtitle" id="headerSubtitle">基本情報入力</div>
+    </div>
+
+    <!-- A: 基本情報入力画面 -->
+    <div class="screen active" id="screenA">
+        <div class="card">
+            <div class="card-title">
+                <span>📋</span>
+                <span>巡視情報</span>
+            </div>
+            
+            <div class="form-group">
+                <label for="inspectionDate" class="required">巡視日</label>
+                <input type="date" id="inspectionDate" value="">
+            </div>
+
+            <div class="form-group">
+                <label for="siteName" class="required">現場名</label>
+                <input type="text" id="siteName" placeholder="例：〇〇ビル新築工事">
+            </div>
+
+            <div class="form-group">
+                <label for="workLocation" class="required">作業場所</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="workLocation" placeholder="例：3階フロア" style="flex: 1;">
+                    <button class="btn btn-secondary" style="width: 44px; padding: 0;">📍</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="constructionType" class="required">施工区分</label>
+                <select id="constructionType">
+                    <option value="">選択してください</option>
+                    <option value="direct">直営</option>
+                    <option value="contract">請負</option>
+                    <option value="cooperation">協力会社</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="workCategory" class="required">作業内容カテゴリ</label>
+                <select id="workCategory">
+                    <option value="">選択してください</option>
+                    <option value="foundation">基礎工事</option>
+                    <option value="frame">躯体工事</option>
+                    <option value="interior">内装工事</option>
+                    <option value="equipment">設備工事</option>
+                    <option value="exterior">外装工事</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span>👷</span>
+                <span>作業責任者・作業者</span>
+            </div>
+            
+            <div class="form-group">
+                <label for="supervisor" class="required">作業責任者</label>
+                <input type="text" id="supervisor" placeholder="氏名を入力">
+            </div>
+
+            <div class="form-group">
+                <label>作業者リスト</label>
+                <div class="worker-list" id="workerList">
+                    <div class="worker-item">
+                        <input type="text" placeholder="作業者名">
+                        <button class="worker-remove" onclick="removeWorker(this)">×</button>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="addWorker()" style="margin-top: 8px;">
+                    <span>＋ 作業者を追加</span>
+                </button>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="goToScreenB()">
+            <span>Next</span>
+            <span>▶</span>
+        </button>
+    </div>
+
+    <!-- B: チェックリスト項目選択画面 -->
+    <div class="screen" id="screenB">
+        <div class="card">
+            <div class="card-title">
+                <span>📝</span>
+                <span>チェック対象作業</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%;"></div>
+            </div>
+            <div style="font-size: 12px; color: #666; text-align: center; margin-top: 4px;">
+                進捗: <span id="progressText">0/0</span>
+            </div>
+        </div>
+
+        <div id="checklistItems">
+            <!-- 動的に生成 -->
+        </div>
+
+        <button class="btn btn-secondary btn-block" onclick="addNewWork()" style="margin-bottom: 12px;">
+            <span>＋ 新規作業を追加</span>
+        </button>
+
+        <button class="btn btn-success btn-block" id="finishBtn" onclick="goToScreenD()" disabled>
+            <span>すべて完了して次へ</span>
+            <span>▶</span>
+        </button>
+    </div>
+
+    <!-- C: チェックリスト入力画面 -->
+    <div class="screen" id="screenC">
+        <div class="toolbar">
+            <button class="toolbar-btn" onclick="takePhoto()">
+                <span class="toolbar-icon">📷</span>
+                <span class="toolbar-label">撮影</span>
+            </button>
+            <button class="toolbar-btn">
+                <span class="toolbar-icon">🖼️</span>
+                <span class="toolbar-label">写真 <span class="badge" id="photoCount">0</span></span>
+            </button>
+            <button class="toolbar-btn" onclick="viewPhotos()">
+                <span class="toolbar-icon">👁️</span>
+                <span class="toolbar-label">確認</span>
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-title" id="currentWorkName">作業名</div>
+        </div>
+
+        <div id="checkItems">
+            <!-- 墜落・転落防止 -->
+            <div class="check-category">墜落・転落防止</div>
+            
+            <div class="check-item">
+                <div class="check-item-header">
+                    <span class="check-item-text">高所作業時の安全帯使用確認</span>
+                    <button class="info-btn" onclick="showInfo('高さ2m以上の作業では必ず安全帯を使用')">i</button>
+                </div>
+                <div class="check-options">
+                    <div class="check-option" onclick="selectOption(this, 'ok')">
+                        <span>✓</span>
+                        <span>適合</span>
+                    </div>
+                    <div class="check-option" onclick="selectOption(this, 'warning')">
+                        <span>⚠</span>
+                        <span>要是正</span>
+                    </div>
+                    <div class="check-option" onclick="selectOption(this, 'ng')">
+                        <span>✗</span>
+                        <span>不適</span>
+                    </div>
+                </div>
+                <button class="note-btn" onclick="addNote()">
+                    <span>!</span>
+                    <span>指摘事項を追加</span>
+                </button>
+            </div>
+
+            <div class="check-item">
+                <div class="check-item-header">
+                    <span class="check-item-text">足場の設置状況確認</span>
+                    <button class="info-btn" onclick="showInfo('足場は作業床の幅60cm以上、手すり高さ90cm以上')">i</button>
+                </div>
+                <div class="check-options">
+                    <div class="check-option" onclick="selectOption(this, 'ok')">
+                        <span>✓</span>
+                        <span>適合</span>
+                    </div>
+                    <div class="check-option" onclick="selectOption(this, 'warning')">
+                        <span>⚠</span>
+                        <span>要是正</span>
+                    </div>
+                    <div class="check-option" onclick="selectOption(this, 'ng')">
+                        <span>✗</span>
+                        <span>不適</span>
+                    </div>
+                </div>
+                <button class="note-btn" onclick="addNote()">
+                    <span>!</span>
+                    <span>指摘事項を追加</span>
+                </button>
+            </div>
+
+            <!-- 保護具 -->
+            <div class="check-category">保護具</div>
+            
+            <div class="check-item">
+                <div class="check-item-header">
+                    <span class="check-item-text">ヘルメット着用状況</span>
+                    <button class="info-btn" onclick="showInfo('作業エリア内では常時着用が必須')">i</button>
+                </div>
+                <div class="check-options">
+                    <div class="check-option" onclick="selectOption(this, 'ok')">
+                        <span>✓</span>
+                        <span>適合</span>
+                    </div>
+                    <div class="check-option" onclick="selectOption(this, 'warning')">
+                        <span>⚠</span>
+                        <span>要是正</span>
+                    </div>
+                    <div class="check-option" onclick="selectOption(this, 'ng')">
+                        <span>✗</span>
+                        <span>不適</span>
+                    </div>
+                </div>
+                <button class="note-btn" onclick="addNote()">
+                    <span>!</span>
+                    <span>指摘事項を追加</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="tips-section">
+            <div class="tips-title">💡 Tips</div>
+            <div class="tips-content">
+                高所作業では「墜落制止用器具」の使用が法令で義務付けられています。<br>
+                フルハーネス型を原則とし、高さ6.75m以下ではベルト型も使用可能です。
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="completeCheck()" style="margin-top: 16px;">
+            <span>チェック完了</span>
+        </button>
+    </div>
+
+    <!-- D: 総括入力画面 -->
+    <div class="screen" id="screenD">
+        <div class="card">
+            <div class="card-title">
+                <span>⚠️</span>
+                <span>指摘事項一覧</span>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table class="issue-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">No</th>
+                            <th style="width: 60px;">区分</th>
+                            <th style="width: 80px;">対象者</th>
+                            <th style="width: 60px;">分類</th>
+                            <th>指摘内容</th>
+                            <th style="width: 40px;">削除</th>
+                        </tr>
+                    </thead>
+                    <tbody id="issueTableBody">
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                <select>
+                                    <option>要是正</option>
+                                    <option>注意</option>
+                                    <option>改善</option>
+                                </select>
+                            </td>
+                            <td><input type="text" placeholder="氏名"></td>
+                            <td><input type="text" placeholder="分類"></td>
+                            <td><input type="text" placeholder="指摘内容"></td>
+                            <td><button class="delete-btn" onclick="deleteIssue(this)">🗑</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="addIssue()" style="margin-top: 12px;">
+                <span>＋ 指摘を追加</span>
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span>💬</span>
+                <span>総合コメント</span>
+            </div>
+            
+            <div class="form-group">
+                <label>所感・助言・対策など</label>
+                <textarea id="generalComment" placeholder="本日の巡視結果について記入してください"></textarea>
+            </div>
+        </div>
+
+        <button class="btn btn-success btn-block" onclick="saveAndFinish()">
+            <span>💾</span>
+            <span>保存して終了</span>
+        </button>
+    </div>
+
+    <!-- モーダル -->
+    <div class="modal" id="completeModal">
+        <div class="modal-content">
+            <div class="modal-title">✅ 保存完了</div>
+            <p style="text-align: center; margin: 16px 0;">
+                巡視データを保存しました。<br>
+                お疲れさまでした。
+            </p>
+            <div class="modal-buttons">
+                <button class="btn btn-primary btn-block" onclick="resetApp()">
+                    新規巡視を開始
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="infoModal">
+        <div class="modal-content">
+            <div class="modal-title">ℹ️ 詳細情報</div>
+            <p id="infoContent" style="margin: 16px 0; font-size: 14px; line-height: 1.6;"></p>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary btn-block" onclick="closeModal('infoModal')">
+                    閉じる
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="noteModal">
+        <div class="modal-content">
+            <div class="modal-title">📝 指摘事項入力</div>
+            <textarea style="width: 100%; min-height: 100px; margin: 16px 0;" placeholder="気づいた点や指摘事項を入力してください"></textarea>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('noteModal')">
+                    キャンセル
+                </button>
+                <button class="btn btn-primary" style="flex: 1;" onclick="saveNote()">
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // データ管理
+        let appData = {
+            basicInfo: {},
+            works: [
+                { id: 1, name: '足場組立作業', selected: false, status: 'pending' },
+                { id: 2, name: '鉄筋組立作業', selected: false, status: 'pending' },
+                { id: 3, name: 'コンクリート打設', selected: false, status: 'pending' }
+            ],
+            currentWork: null,
+            checkResults: {},
+            issues: [],
+            photoCount: 0
+        };
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 今日の日付を設定
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inspectionDate').value = today;
+            
+            // チェックリスト項目を表示
+            renderChecklistItems();
+        });
+
+        // 画面遷移
+        function switchScreen(screenId, subtitle) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            document.getElementById('headerSubtitle').textContent = subtitle;
+            window.scrollTo(0, 0);
+        }
+
+        // A → B
+        function goToScreenB() {
+            // バリデーション
+            const required = ['inspectionDate', 'siteName', 'workLocation', 'constructionType', 'workCategory', 'supervisor'];
+            let valid = true;
+            
+            required.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el.value) {
+                    el.style.borderColor = '#e74c3c';
+                    valid = false;
+                } else {
+                    el.style.borderColor = '#ddd';
+                }
+            });
+            
+            if (!valid) {
+                alert('必須項目を入力してください');
+                return;
+            }
+            
+            // データ保存
+            appData.basicInfo = {
+                date: document.getElementById('inspectionDate').value,
+                site: document.getElementById('siteName').value,
+                location: document.getElementById('workLocation').value,
+                type: document.getElementById('constructionType').value,
+                category: document.getElementById('workCategory').value,
+                supervisor: document.getElementById('supervisor').value
+            };
+            
+            switchScreen('screenB', 'チェックリスト項目選択');
+        }
+
+        // チェックリスト項目の表示
+        function renderChecklistItems() {
+            const container = document.getElementById('checklistItems');
+            container.innerHTML = '';
+            
+            appData.works.forEach(work => {
+                const item = document.createElement('div');
+                item.className = 'checklist-item';
+                item.onclick = () => toggleWork(work.id);
+                
+                let statusClass = 'status-pending';
+                let statusIcon = '□';
+                if (work.status === 'progress') {
+                    statusClass = 'status-progress';
+                    statusIcon = '■';
+                } else if (work.status === 'complete') {
+                    statusClass = 'status-complete';
+                    statusIcon = '✓';
+                }
+                
+                item.innerHTML = `
+                    <div class="checklist-checkbox ${work.selected ? 'checked' : ''}" id="check-${work.id}"></div>
+                    <div class="checklist-name">${work.name}</div>
+                    <div class="checklist-status ${statusClass}">${statusIcon}</div>
+                `;
+                
+                container.appendChild(item);
+            });
+            
+            updateProgress();
+        }
+
+        // 作業の選択/開始
+        function toggleWork(workId) {
+            const work = appData.works.find(w => w.id === workId);
+            
+            if (!work.selected) {
+                // 選択して画面Cへ
+                work.selected = true;
+                work.status = 'progress';
+                appData.currentWork = work;
+                
+                document.getElementById('currentWorkName').textContent = work.name;
+                switchScreen('screenC', `チェック入力 - ${work.name}`);
+            } else if (work.status === 'progress') {
+                // 既に進行中なら画面Cへ
+                appData.currentWork = work;
+                document.getElementById('currentWorkName').textContent = work.name;
+                switchScreen('screenC', `チェック入力 - ${work.name}`);
+            }
+        }
+
+        // 新規作業追加
+        function addNewWork() {
+            const name = prompt('新しい作業名を入力してください');
+            if (name) {
+                const newWork = {
+                    id: Date.now(),
+                    name: name,
+                    selected: false,
+                    status: 'pending'
+                };
+                appData.works.push(newWork);
+                renderChecklistItems();
+            }
+        }
+
+        // チェック完了
+        function completeCheck() {
+            if (appData.currentWork) {
+                appData.currentWork.status = 'complete';
+                
+                // アニメーション
+                const btn = event.target;
+                btn.classList.add('pulse');
+                
+                setTimeout(() => {
+                    // 画面Bに戻る
+                    switchScreen('screenB', 'チェックリスト項目選択');
+                    renderChecklistItems();
+                    
+                    // 全完了チェック
+                    const allComplete = appData.works.every(w => w.status === 'complete');
+                    if (allComplete) {
+                        setTimeout(() => {
+                            goToScreenD();
+                        }, 500);
+                    }
+                }, 300);
+            }
+        }
+
+        // 進捗更新
+        function updateProgress() {
+            const total = appData.works.length;
+            const completed = appData.works.filter(w => w.status === 'complete').length;
+            const percentage = total > 0 ? (completed / total * 100) : 0;
+            
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = `${completed}/${total}`;
+            
+            // 完了ボタンの有効化
+            const finishBtn = document.getElementById('finishBtn');
+            if (percentage === 100) {
+                finishBtn.disabled = false;
+            } else {
+                finishBtn.disabled = true;
+            }
+        }
+
+        // B → D
+        function goToScreenD() {
+            switchScreen('screenD', '総括入力');
+        }
+
+        // 作業者の追加/削除
+        function addWorker() {
+            const list = document.getElementById('workerList');
+            const item = document.createElement('div');
+            item.className = 'worker-item';
+            item.innerHTML = `
+                <input type="text" placeholder="作業者名">
+                <button class="worker-remove" onclick="removeWorker(this)">×</button>
+            `;
+            list.appendChild(item);
+        }
+
+        function removeWorker(btn) {
+            btn.parentElement.remove();
+        }
+
+        // 指摘事項の追加/削除
+        let issueCount = 1;
+        function addIssue() {
+            issueCount++;
+            const tbody = document.getElementById('issueTableBody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${issueCount}</td>
+                <td>
+                    <select>
+                        <option>要是正</option>
+                        <option>注意</option>
+                        <option>改善</option>
+                    </select>
+                </td>
+                <td><input type="text" placeholder="氏名"></td>
+                <td><input type="text" placeholder="分類"></td>
+                <td><input type="text" placeholder="指摘内容"></td>
+                <td><button class="delete-btn" onclick="deleteIssue(this)">🗑</button></td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        function deleteIssue(btn) {
+            btn.closest('tr').remove();
+        }
+
+        // チェック項目の選択
+        function selectOption(element, type) {
+            // 同じグループ内の選択をクリア
+            const options = element.parentElement.querySelectorAll('.check-option');
+            options.forEach(opt => {
+                opt.classList.remove('selected-ok', 'selected-warning', 'selected-ng');
+            });
+            
+            // 選択状態を設定
+            if (type === 'ok') {
+                element.classList.add('selected-ok');
+            } else if (type === 'warning') {
+                element.classList.add('selected-warning');
+            } else if (type === 'ng') {
+                element.classList.add('selected-ng');
+            }
+            
+            // アニメーション
+            element.classList.add('pulse');
+            setTimeout(() => element.classList.remove('pulse'), 500);
+        }
+
+        // 写真機能（ダミー）
+        function takePhoto() {
+            appData.photoCount++;
+            document.getElementById('photoCount').textContent = appData.photoCount;
+            alert('📷 写真を撮影しました（デモ）');
+        }
+
+        function viewPhotos() {
+            alert(`📸 ${appData.photoCount}枚の写真があります（デモ）`);
+        }
+
+        // モーダル
+        function showInfo(text) {
+            document.getElementById('infoContent').textContent = text;
+            document.getElementById('infoModal').classList.add('active');
+        }
+
+        function addNote() {
+            document.getElementById('noteModal').classList.add('active');
+        }
+
+        function saveNote() {
+            closeModal('noteModal');
+            alert('指摘事項を保存しました（デモ）');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // 保存して終了
+        function saveAndFinish() {
+            document.getElementById('completeModal').classList.add('active');
+        }
+
+        // アプリリセット
+        function resetApp() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
