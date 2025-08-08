@@ -533,6 +533,15 @@
             border-bottom: 1px solid #eee;
         }
 
+        .issue-table tbody tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .issue-table tbody tr:hover {
+            background: #f0f8ff;
+        }
+
         .issue-table input,
         .issue-table select {
             width: 100%;
@@ -540,6 +549,8 @@
             font-size: 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            pointer-events: none;
+            background: transparent;
         }
 
         .delete-btn {
@@ -553,6 +564,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            pointer-events: all;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
         }
 
         /* モーダル */
@@ -878,6 +894,10 @@
                 <span>指摘事項一覧</span>
             </div>
             
+            <div style="font-size: 12px; color: #666; margin-bottom: 12px;">
+                ※ 行をクリックすると編集できます
+            </div>
+            
             <div style="overflow-x: auto;">
                 <table class="issue-table">
                     <thead>
@@ -885,7 +905,7 @@
                             <th style="width: 40px;">No</th>
                             <th style="width: 60px;">区分</th>
                             <th style="width: 80px;">対象者</th>
-                            <th style="width: 60px;">分類</th>
+                            <th style="width: 100px;">分類</th>
                             <th>指摘内容</th>
                             <th style="width: 40px;">削除</th>
                         </tr>
@@ -957,6 +977,50 @@
                 </button>
                 <button class="btn btn-primary" style="flex: 1;" onclick="saveNote()">
                     保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editIssueModal">
+        <div class="modal-content">
+            <div class="modal-title">✏️ 指摘事項編集</div>
+            <div style="margin: 16px 0;">
+                <div class="form-group">
+                    <label>区分</label>
+                    <select id="editIssueSeverity" style="width: 100%;">
+                        <option value="要是正">要是正</option>
+                        <option value="注意">注意</option>
+                        <option value="改善">改善</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>対象者</label>
+                    <input type="text" id="editIssueWorker" placeholder="氏名を入力">
+                </div>
+                <div class="form-group">
+                    <label>分類（チェックリスト名）</label>
+                    <select id="editIssueCategory" style="width: 100%;">
+                        <option value="">選択してください</option>
+                        <option value="ミーティング・施工体制事項">ミーティング・施工体制事項</option>
+                        <option value="保安対策事項">保安対策事項</option>
+                        <option value="MH作業事項">MH作業事項</option>
+                        <option value="柱上作業事項">柱上作業事項</option>
+                        <option value="高所作業車・車両系建設機械作業事項">高所作業車・車両系建設機械作業事項</option>
+                        <option value="夜間作業事項">夜間作業事項</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>指摘内容</label>
+                    <textarea id="editIssueContent" style="width: 100%; min-height: 80px;" placeholder="指摘内容を入力してください"></textarea>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal('editIssueModal')">
+                    キャンセル
+                </button>
+                <button class="btn btn-primary" style="flex: 1;" onclick="saveEditedIssue()">
+                    更新
                 </button>
             </div>
         </div>
@@ -1411,8 +1475,11 @@
                             const workers = ['田中太郎', '佐藤次郎', '鈴木三郎', '高橋四郎', '山田五郎'];
                             const randomWorker = workers[Math.floor(Math.random() * workers.length)];
                             
-                            // 区分を決定
+                            // 区分を決定（要是正=不適、注意=要是正）
                             const severity = result === 'ng' ? '要是正' : '注意';
+                            
+                            // 分類はチェックリスト名を使用
+                            const categoryName = def.name;
                             
                             // 指摘内容を生成（ノートがあればそれを使用）
                             let issueText = '';
@@ -1444,18 +1511,23 @@
                             }
                             
                             const row = document.createElement('tr');
+                            row.onclick = (e) => {
+                                if (!e.target.classList.contains('delete-btn')) {
+                                    openEditIssueModal(row);
+                                }
+                            };
                             row.innerHTML = `
                                 <td>${issueCount}</td>
                                 <td>
-                                    <select>
+                                    <select disabled>
                                         <option ${severity === '要是正' ? 'selected' : ''}>要是正</option>
                                         <option ${severity === '注意' ? 'selected' : ''}>注意</option>
                                         <option>改善</option>
                                     </select>
                                 </td>
-                                <td><input type="text" value="${randomWorker}"></td>
-                                <td><input type="text" value="${def.name.substring(0, 5)}"></td>
-                                <td><input type="text" value="${issueText}"></td>
+                                <td><input type="text" value="${randomWorker}" readonly></td>
+                                <td><input type="text" value="${categoryName}" readonly></td>
+                                <td><input type="text" value="${issueText}" readonly></td>
                                 <td><button class="delete-btn" onclick="deleteIssue(this)">🗑</button></td>
                             `;
                             tbody.appendChild(row);
@@ -1467,26 +1539,31 @@
             // 指摘事項がない場合は、デモ用のサンプルデータを追加
             if (issueCount === 0) {
                 const sampleIssues = [
-                    { severity: '注意', worker: '田中太郎', category: '保安対策', content: '作業区画の明示をより明確にすること' },
-                    { severity: '改善', worker: '佐藤次郎', category: 'MH作業', content: '昇降設備の使用前点検を徹底すること' },
-                    { severity: '注意', worker: '鈴木三郎', category: '施工体制', content: 'KY活動記録の記入を確実に行うこと' }
+                    { severity: '注意', worker: '田中太郎', category: '保安対策事項', content: '作業区画の明示をより明確にすること' },
+                    { severity: '改善', worker: '佐藤次郎', category: 'MH作業事項', content: '昇降設備の使用前点検を徹底すること' },
+                    { severity: '注意', worker: '鈴木三郎', category: 'ミーティング・施工体制事項', content: 'KY活動記録の記入を確実に行うこと' }
                 ];
                 
                 sampleIssues.forEach(issue => {
                     issueCount++;
                     const row = document.createElement('tr');
+                    row.onclick = (e) => {
+                        if (!e.target.classList.contains('delete-btn')) {
+                            openEditIssueModal(row);
+                        }
+                    };
                     row.innerHTML = `
                         <td>${issueCount}</td>
                         <td>
-                            <select>
+                            <select disabled>
                                 <option ${issue.severity === '要是正' ? 'selected' : ''}>要是正</option>
                                 <option ${issue.severity === '注意' ? 'selected' : ''}>注意</option>
                                 <option ${issue.severity === '改善' ? 'selected' : ''}>改善</option>
                             </select>
                         </td>
-                        <td><input type="text" value="${issue.worker}"></td>
-                        <td><input type="text" value="${issue.category}"></td>
-                        <td><input type="text" value="${issue.content}"></td>
+                        <td><input type="text" value="${issue.worker}" readonly></td>
+                        <td><input type="text" value="${issue.category}" readonly></td>
+                        <td><input type="text" value="${issue.content}" readonly></td>
                         <td><button class="delete-btn" onclick="deleteIssue(this)">🗑</button></td>
                     `;
                     tbody.appendChild(row);
@@ -1512,6 +1589,8 @@
 
         // 指摘事項の追加/削除
         let issueCount = 0;
+        let currentEditingRow = null;
+        
         function addIssue() {
             issueCount++;
             const tbody = document.getElementById('issueTableBody');
@@ -1521,37 +1600,89 @@
             const randomWorker = workers[Math.floor(Math.random() * workers.length)];
             
             const row = document.createElement('tr');
+            row.onclick = (e) => {
+                if (!e.target.classList.contains('delete-btn')) {
+                    openEditIssueModal(row);
+                }
+            };
             row.innerHTML = `
                 <td>${issueCount}</td>
                 <td>
-                    <select>
+                    <select disabled>
                         <option>要是正</option>
                         <option selected>注意</option>
                         <option>改善</option>
                     </select>
                 </td>
-                <td><input type="text" placeholder="氏名" value="${randomWorker}"></td>
-                <td><input type="text" placeholder="分類" value=""></td>
-                <td><input type="text" placeholder="指摘内容を入力してください" value=""></td>
+                <td><input type="text" placeholder="氏名" value="${randomWorker}" readonly></td>
+                <td><input type="text" placeholder="分類" value="" readonly></td>
+                <td><input type="text" placeholder="指摘内容を入力してください" value="" readonly></td>
                 <td><button class="delete-btn" onclick="deleteIssue(this)">🗑</button></td>
             `;
             tbody.appendChild(row);
             
-            // 追加した行にフォーカス
-            const newInput = row.querySelector('td:last-child').previousElementSibling.querySelector('input');
-            if (newInput) {
-                newInput.focus();
+            // 追加後すぐに編集モーダルを開く
+            openEditIssueModal(row);
+        }
+        
+        function deleteIssue(btn) {
+            event.stopPropagation(); // 行クリックイベントの伝播を防ぐ
+            if (confirm('この指摘事項を削除しますか？')) {
+                btn.closest('tr').remove();
+                // 番号を振り直し
+                const rows = document.querySelectorAll('#issueTableBody tr');
+                rows.forEach((row, index) => {
+                    row.querySelector('td:first-child').textContent = index + 1;
+                });
+                issueCount = rows.length;
             }
         }
-
-        function deleteIssue(btn) {
-            btn.closest('tr').remove();
-            // 番号を振り直し
-            const rows = document.querySelectorAll('#issueTableBody tr');
-            rows.forEach((row, index) => {
-                row.querySelector('td:first-child').textContent = index + 1;
-            });
-            issueCount = rows.length;
+        
+        // 指摘事項編集モーダルを開く
+        function openEditIssueModal(row) {
+            currentEditingRow = row;
+            const modal = document.getElementById('editIssueModal');
+            
+            // 現在の値を取得
+            const severity = row.querySelector('select').value;
+            const worker = row.querySelectorAll('input')[0].value;
+            const category = row.querySelectorAll('input')[1].value;
+            const content = row.querySelectorAll('input')[2].value;
+            
+            // モーダルに値を設定
+            document.getElementById('editIssueSeverity').value = severity;
+            document.getElementById('editIssueWorker').value = worker;
+            document.getElementById('editIssueCategory').value = category;
+            document.getElementById('editIssueContent').value = content;
+            
+            modal.classList.add('active');
+        }
+        
+        // 編集した指摘事項を保存
+        function saveEditedIssue() {
+            if (!currentEditingRow) return;
+            
+            // 編集内容を取得
+            const severity = document.getElementById('editIssueSeverity').value;
+            const worker = document.getElementById('editIssueWorker').value;
+            const category = document.getElementById('editIssueCategory').value;
+            const content = document.getElementById('editIssueContent').value;
+            
+            // 入力チェック
+            if (!worker || !category || !content) {
+                alert('対象者、分類、指摘内容は必須項目です');
+                return;
+            }
+            
+            // 行を更新
+            currentEditingRow.querySelector('select').value = severity;
+            currentEditingRow.querySelectorAll('input')[0].value = worker;
+            currentEditingRow.querySelectorAll('input')[1].value = category;
+            currentEditingRow.querySelectorAll('input')[2].value = content;
+            
+            // モーダルを閉じる
+            closeModal('editIssueModal');
+            currentEditingRow = null;
         }
 
         // 写真機能（ダミー）
@@ -1617,6 +1748,9 @@
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
+            if (modalId === 'editIssueModal') {
+                currentEditingRow = null;
+            }
         }
 
         // 保存して終了
