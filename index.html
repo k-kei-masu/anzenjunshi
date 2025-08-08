@@ -228,6 +228,63 @@
             justify-content: center;
         }
 
+        /* チェックリスト選択 */
+        .checklist-selector {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .checklist-options {
+            display: grid;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .checklist-option-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .checklist-option-item:hover {
+            background: #e8f4fd;
+        }
+
+        .checklist-option-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .checklist-option-add {
+            padding: 6px 16px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checklist-option-add:active {
+            transform: scale(0.95);
+        }
+
+        .checklist-option-add.added {
+            background: #27ae60;
+        }
+
         /* チェックリスト */
         .checklist-item {
             background: white;
@@ -246,97 +303,6 @@
         .checklist-item:active {
             transform: scale(0.98);
             background: #f8f9fa;
-        }
-
-        /* ツリー選択 */
-        .tree-selector {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .tree-category {
-            margin-bottom: 12px;
-        }
-
-        .tree-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px;
-            background: #f0f8ff;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 600;
-            color: #2c5aa8;
-        }
-
-        .tree-header:active {
-            background: #e0f0ff;
-        }
-
-        .tree-arrow {
-            display: inline-block;
-            transition: transform 0.2s;
-        }
-
-        .tree-header.expanded .tree-arrow {
-            transform: rotate(90deg);
-        }
-
-        .tree-items {
-            display: none;
-            padding-left: 20px;
-            margin-top: 8px;
-        }
-
-        .tree-items.expanded {
-            display: block;
-        }
-
-        .tree-item {
-            padding: 8px 12px;
-            margin-bottom: 4px;
-            border-left: 3px solid #e0e0e0;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .tree-item:hover {
-            background: #f8f9fa;
-            border-left-color: #4a90e2;
-        }
-
-        .tree-item-add {
-            padding: 4px 12px;
-            background: #4a90e2;
-            color: white;
-            border-radius: 4px;
-            font-size: 12px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
-        }
-
-        .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-
-        .empty-state-text {
-            font-size: 14px;
-            line-height: 1.6;
         }
 
         .checklist-checkbox {
@@ -363,7 +329,7 @@
 
         .checklist-name {
             flex: 1;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
         }
 
@@ -390,6 +356,22 @@
         .status-complete {
             background: #27ae60;
             color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         /* ツールバー */
@@ -646,31 +628,6 @@
             transition: width 0.3s;
         }
 
-        /* フローティングアクションボタン */
-        .fab {
-            position: fixed;
-            bottom: 24px;
-            right: calc(50% - 175px);
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-            color: white;
-            border: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            z-index: 90;
-            transition: all 0.2s;
-        }
-
-        .fab:active {
-            transform: scale(0.95);
-        }
-
         /* アニメーション */
         @keyframes pulse {
             0% { transform: scale(1); }
@@ -746,11 +703,13 @@
                 <label for="workCategory" class="required">作業内容カテゴリ</label>
                 <select id="workCategory">
                     <option value="">選択してください</option>
-                    <option value="foundation">基礎工事</option>
-                    <option value="frame">躯体工事</option>
-                    <option value="interior">内装工事</option>
-                    <option value="equipment">設備工事</option>
-                    <option value="exterior">外装工事</option>
+                    <option value="excavation">掘削</option>
+                    <option value="burial">埋設</option>
+                    <option value="backfill">埋戻</option>
+                    <option value="cable_pulling">ケーブル入線</option>
+                    <option value="cable_rising">ケーブル立上</option>
+                    <option value="cable_connection">ケーブル接続</option>
+                    <option value="equipment_installation">機器設置</option>
                 </select>
             </div>
         </div>
@@ -791,7 +750,7 @@
         <div class="card">
             <div class="card-title">
                 <span>📝</span>
-                <span>チェック対象作業</span>
+                <span>チェックリスト選択</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressBar" style="width: 0%;"></div>
@@ -801,169 +760,79 @@
             </div>
         </div>
 
-        <!-- ツリー選択 -->
-        <div class="tree-selector">
+        <!-- チェックリスト選択 -->
+        <div class="checklist-selector">
             <div class="card-title">
-                <span>🔍</span>
-                <span>作業を選択</span>
+                <span>📋</span>
+                <span>利用可能なチェックリスト</span>
             </div>
             
-            <div class="tree-category">
-                <div class="tree-header" onclick="toggleTree('security')">
-                    <span class="tree-arrow">▶</span>
-                    <span>🚧 保安対策関連作業</span>
+            <div class="checklist-options">
+                <div class="checklist-option-item">
+                    <div class="checklist-option-label">
+                        <span>📊</span>
+                        <span>0. ミーティング・施工体制事項</span>
+                    </div>
+                    <button class="checklist-option-add" onclick="addChecklist(0, 'ミーティング・施工体制事項')">追加</button>
                 </div>
-                <div class="tree-items" id="tree-security">
-                    <div class="tree-item">
-                        <span>道路保安設備設置作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('道路保安設備設置作業')">追加</button>
+                
+                <div class="checklist-option-item">
+                    <div class="checklist-option-label">
+                        <span>🚧</span>
+                        <span>1. 保安対策事項</span>
                     </div>
-                    <div class="tree-item">
-                        <span>交通誘導・警備作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('交通誘導・警備作業')">追加</button>
-                    </div>
-                    <div class="tree-item">
-                        <span>作業区画設定作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('作業区画設定作業')">追加</button>
-                    </div>
+                    <button class="checklist-option-add" onclick="addChecklist(1, '保安対策事項')">追加</button>
                 </div>
-            </div>
-
-            <div class="tree-category">
-                <div class="tree-header" onclick="toggleTree('manhole')">
-                    <span class="tree-arrow">▶</span>
-                    <span>🕳️ MH（マンホール）作業</span>
+                
+                <div class="checklist-option-item">
+                    <div class="checklist-option-label">
+                        <span>🕳️</span>
+                        <span>2. MH作業事項</span>
+                    </div>
+                    <button class="checklist-option-add" onclick="addChecklist(2, 'MH作業事項')">追加</button>
                 </div>
-                <div class="tree-items" id="tree-manhole">
-                    <div class="tree-item">
-                        <span>MH内作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('MH内作業')">追加</button>
+                
+                <div class="checklist-option-item">
+                    <div class="checklist-option-label">
+                        <span>⚡</span>
+                        <span>3. 柱上作業事項</span>
                     </div>
-                    <div class="tree-item">
-                        <span>MH開口部養生作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('MH開口部養生作業')">追加</button>
-                    </div>
-                    <div class="tree-item">
-                        <span>酸素濃度測定・換気作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('酸素濃度測定・換気作業')">追加</button>
-                    </div>
+                    <button class="checklist-option-add" onclick="addChecklist(3, '柱上作業事項')">追加</button>
                 </div>
-            </div>
-
-            <div class="tree-category">
-                <div class="tree-header" onclick="toggleTree('pole')">
-                    <span class="tree-arrow">▶</span>
-                    <span>⚡ 柱上作業</span>
+                
+                <div class="checklist-option-item">
+                    <div class="checklist-option-label">
+                        <span>🏗️</span>
+                        <span>4. 高所作業車・車両系建設機械作業事項</span>
+                    </div>
+                    <button class="checklist-option-add" onclick="addChecklist(4, '高所作業車・車両系建設機械作業事項')">追加</button>
                 </div>
-                <div class="tree-items" id="tree-pole">
-                    <div class="tree-item">
-                        <span>電柱昇降作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('電柱昇降作業')">追加</button>
+                
+                <div class="checklist-option-item">
+                    <div class="checklist-option-label">
+                        <span>🌙</span>
+                        <span>5. 夜間作業事項</span>
                     </div>
-                    <div class="tree-item">
-                        <span>架空配線作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('架空配線作業')">追加</button>
-                    </div>
-                    <div class="tree-item">
-                        <span>高圧活線作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('高圧活線作業')">追加</button>
-                    </div>
-                    <div class="tree-item">
-                        <span>電柱建替作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('電柱建替作業')">追加</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tree-category">
-                <div class="tree-header" onclick="toggleTree('vehicle')">
-                    <span class="tree-arrow">▶</span>
-                    <span>🏗️ 高所作業車・重機作業</span>
-                </div>
-                <div class="tree-items" id="tree-vehicle">
-                    <div class="tree-item">
-                        <span>高所作業車作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('高所作業車作業')">追加</button>
-                    </div>
-                    <div class="tree-item">
-                        <span>クレーン作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('クレーン作業')">追加</button>
-                    </div>
-                    <div class="tree-item">
-                        <span>バックホウ掘削作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('バックホウ掘削作業')">追加</button>
-                    </div>
-                    <div class="tree-item">
-                        <span>ダンプトラック運搬作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('ダンプトラック運搬作業')">追加</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tree-category">
-                <div class="tree-header" onclick="toggleTree('night')">
-                    <span class="tree-arrow">▶</span>
-                    <span>🌙 夜間作業</span>
-                </div>
-                <div class="tree-items" id="tree-night">
-                    <div class="tree-item">
-                        <span>夜間道路工事</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('夜間道路工事')">追加</button>
-                    </div>
-                    <div class="tree-item">
-                        <span>夜間電気工事</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('夜間電気工事')">追加</button>
-                    </div>
-                    <div class="tree-item">
-                        <span>夜間緊急対応作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('夜間緊急対応作業')">追加</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tree-category">
-                <div class="tree-header" onclick="toggleTree('general')">
-                    <span class="tree-arrow">▶</span>
-                    <span>🔨 一般土木・電気工事</span>
-                </div>
-                <div class="tree-items" id="tree-general">
-                    <div class="tree-item">
-                        <span>ケーブル敷設作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('ケーブル敷設作業')">追加</button>
-                    </div>
-                    <div class="tree-item">
-                        <span>管路工事</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('管路工事')">追加</button>
-                    </div>
-                    <div class="tree-item">
-                        <span>掘削・埋戻し作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('掘削・埋戻し作業')">追加</button>
-                    </div>
-                    <div class="tree-item">
-                        <span>舗装復旧作業</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('舗装復旧作業')">追加</button>
-                    </div>
-                    <div class="tree-item">
-                        <span>変電設備工事</span>
-                        <button class="tree-item-add" onclick="addWorkFromTree('変電設備工事')">追加</button>
-                    </div>
+                    <button class="checklist-option-add" onclick="addChecklist(5, '夜間作業事項')">追加</button>
                 </div>
             </div>
         </div>
 
-        <div id="checklistItems">
-            <div class="empty-state" id="emptyState">
-                <div class="empty-state-icon">📋</div>
-                <div class="empty-state-text">
-                    作業が選択されていません<br>
-                    上記から作業を選択してください
+        <div class="card">
+            <div class="card-title">
+                <span>✅</span>
+                <span>選択済みチェックリスト</span>
+            </div>
+            <div id="checklistItems">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <div class="empty-state-text">
+                        チェックリストが選択されていません<br>
+                        上記から必要なチェックリストを選択してください
+                    </div>
                 </div>
             </div>
         </div>
-
-        <button class="btn btn-secondary btn-block" onclick="addNewWork()" style="margin-bottom: 12px;">
-            <span>＋ その他の作業を追加</span>
-        </button>
 
         <button class="btn btn-success btn-block" id="finishBtn" onclick="goToScreenD()" disabled>
             <span>すべて完了して次へ</span>
@@ -989,421 +858,11 @@
         </div>
 
         <div class="card">
-            <div class="card-title" id="currentWorkName">作業名</div>
+            <div class="card-title" id="currentChecklistName">チェックリスト名</div>
         </div>
 
         <div id="checkItems">
-            <!-- 保安対策事項 -->
-            <div class="check-category">保安対策事項（電気、土木共通）</div>
-            
-            <div class="check-item" data-item-id="1">
-                <div class="check-item-header">
-                    <span class="check-item-text">1. 作業標識や保安設備は適切に配置されているか。</span>
-                    <button class="info-btn" onclick="showInfo('道路使用許可条件に従い、適切な位置に設置')">i</button>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 1)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 1)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 1)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(1)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <div class="check-item" data-item-id="2">
-                <div class="check-item-header">
-                    <span class="check-item-text">2. 作業箇所範囲内への第三者立入禁止措置は行われているか。</span>
-                    <button class="info-btn" onclick="showInfo('カラーコーン、バー等で確実に区画')">i</button>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 2)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 2)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 2)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(2)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <div class="check-item" data-item-id="3">
-                <div class="check-item-header">
-                    <span class="check-item-text">3. 交通警備員（人数・配置）による交通誘導は的確に行われているか。</span>
-                    <button class="info-btn" onclick="showInfo('道路使用許可条件に基づく配置')">i</button>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 3)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 3)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 3)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(3)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <div class="check-item" data-item-id="4">
-                <div class="check-item-header">
-                    <span class="check-item-text">4. 資格者配置路線における検定合格警備員の配置は適切か。</span>
-                    <button class="info-btn" onclick="showInfo('検定合格証明書の確認')">i</button>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 4)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 4)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 4)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(4)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <!-- MH作業事項 -->
-            <div class="check-category">MH作業事項（電気、土木共通）</div>
-            
-            <div class="check-item" data-item-id="5">
-                <div class="check-item-header">
-                    <span class="check-item-text">5. 開口部に適切な墜落防止措置を行っているか。また、墜落防止対策の手順は誤りないか。</span>
-                    <button class="info-btn" onclick="showInfo('開口部の養生、安全柵の設置確認')">i</button>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 5)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 5)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 5)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(5)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <div class="check-item" data-item-id="6">
-                <div class="check-item-header">
-                    <span class="check-item-text">6. MH作業前に有資格者による酸素および硫化水素等の濃度測定・換気は行われているか。また、記録の保管は適切か。</span>
-                    <button class="info-btn" onclick="showInfo('酸素18%以上、硫化水素10ppm以下の確認')">i</button>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 6)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 6)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 6)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(6)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <div class="check-item" data-item-id="7">
-                <div class="check-item-header">
-                    <span class="check-item-text">7. 必要な昇降設備は施されているか。昇降中は安全ブロックを使用しているか。（2m以上）</span>
-                    <button class="info-btn" onclick="showInfo('2m以上の高所では安全ブロック必須')">i</button>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 7)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 7)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 7)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(7)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <!-- 柱上作業事項 -->
-            <div class="check-category">柱上作業事項（電気、土木共通）</div>
-            
-            <div class="check-item" data-item-id="8">
-                <div class="check-item-header">
-                    <span class="check-item-text">8. フルハーネス、SA付ランヤードの目視点検を行い、本ロープに体重を掛けて点検して使用しているか。</span>
-                    <button class="info-btn" onclick="showInfo('使用前点検の実施確認')">i</button>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 8)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 8)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 8)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(8)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <div class="check-item" data-item-id="9">
-                <div class="check-item-header">
-                    <span class="check-item-text">9. 電柱作業における足場ボルト（締付・腐食）の確認は良いか。</span>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 9)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 9)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 9)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(9)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <div class="check-item" data-item-id="10">
-                <div class="check-item-header">
-                    <span class="check-item-text">10. 安定した足場を確保して作業しているか。</span>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 10)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 10)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 10)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(10)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <div class="check-item" data-item-id="11">
-                <div class="check-item-header">
-                    <span class="check-item-text">11. SA付ランヤードの取付箇所は安全帯取付箇所より上部に取付けているか。</span>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 11)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 11)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 11)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(11)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <div class="check-item" data-item-id="12">
-                <div class="check-item-header">
-                    <span class="check-item-text">12. SA付ランヤード、ワークポジショニングロープの併用は確実に行われているか。（フック取付け時の2度引き確認）</span>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 12)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 12)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 12)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(12)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <!-- 以降省略：13-20の柱上作業事項 -->
-
-            <!-- 高所作業車・車両系建設機械作業事項 -->
-            <div class="check-category">高所作業車・車両系建設機械作業事項（電気、土木共通）</div>
-            
-            <div class="check-item" data-item-id="21">
-                <div class="check-item-header">
-                    <span class="check-item-text">21. 工事車両の歯止め、及び駐車ブレーキは確実に引かれているか。</span>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 21)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 21)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 21)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(21)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <!-- 夜間作業事項 -->
-            <div class="check-category">夜間作業事項（電気、土木共通）</div>
-            
-            <div class="check-item" data-item-id="28">
-                <div class="check-item-header">
-                    <span class="check-item-text">28. 夜間作業時、保安施設照明や現場内照明の照度は十分か。</span>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 28)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 28)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 28)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(28)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <!-- ミーティング・施工体制事項 -->
-            <div class="check-category">ミーティング・施工体制事項（電気、土木共通）</div>
-            
-            <div class="check-item" data-item-id="31">
-                <div class="check-item-header">
-                    <span class="check-item-text">31. 現場代理人（安全管理者）は安全ミーティング実施表の「安全指示書」が記入されているか。内容は適切か。</span>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 31)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 31)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 31)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(31)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
-
-            <div class="check-item" data-item-id="43">
-                <div class="check-item-header">
-                    <span class="check-item-text">43. 作業員のヘルメット、作業靴、服装及び保護具（防振手袋、防護メガネ、防塵マスク）の着用は適切か。</span>
-                </div>
-                <div class="check-options">
-                    <div class="check-option" onclick="selectOption(this, 'ok', 43)">
-                        <span>✓</span>
-                        <span>適合</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'warning', 43)">
-                        <span>⚠</span>
-                        <span>要是正</span>
-                    </div>
-                    <div class="check-option" onclick="selectOption(this, 'ng', 43)">
-                        <span>✗</span>
-                        <span>不適</span>
-                    </div>
-                </div>
-                <button class="note-btn" onclick="addNote(43)">
-                    <span>!</span>
-                    <span>指摘事項を追加</span>
-                </button>
-            </div>
+            <!-- 動的に生成される -->
         </div>
 
         <button class="btn btn-primary btn-block" onclick="completeCheck()" style="margin-top: 16px;">
@@ -1432,20 +891,7 @@
                         </tr>
                     </thead>
                     <tbody id="issueTableBody">
-                        <tr>
-                            <td>1</td>
-                            <td>
-                                <select>
-                                    <option>要是正</option>
-                                    <option>注意</option>
-                                    <option>改善</option>
-                                </select>
-                            </td>
-                            <td><input type="text" placeholder="氏名"></td>
-                            <td><input type="text" placeholder="分類"></td>
-                            <td><input type="text" placeholder="指摘内容"></td>
-                            <td><button class="delete-btn" onclick="deleteIssue(this)">🗑</button></td>
-                        </tr>
+                        <!-- 動的に生成される -->
                     </tbody>
                 </table>
             </div>
@@ -1520,10 +966,75 @@
         // データ管理
         let appData = {
             basicInfo: {},
-            works: [],  // 初期は空配列
-            currentWork: null,
-            checkResults: {},  // 作業IDごとにチェック結果を保存
+            checklists: [],  // 選択されたチェックリスト
+            currentChecklist: null,
+            checkResults: {},  // チェックリストIDごとにチェック結果を保存
             issues: []
+        };
+
+        // チェックリストの定義
+        const checklistDefinitions = {
+            0: {
+                name: 'ミーティング・施工体制事項',
+                icon: '📊',
+                items: [
+                    { id: 31, text: '現場代理人（安全管理者）は安全ミーティング実施表の「安全指示書」が記入されているか。内容は適切か。' },
+                    { id: 32, text: '作業着手前ミーティングは「地中線工事ミーティング実施要領」に従い実施しているか。' },
+                    { id: 36, text: '作業場所は必ず機器名やMH番号で指示されているか。' },
+                    { id: 43, text: '作業員のヘルメット、作業靴、服装及び保護具の着用は適切か。' },
+                    { id: 44, text: '作業主任者及び有資格者は適切に配置され、有資格者証等を携帯しているか。' }
+                ]
+            },
+            1: {
+                name: '保安対策事項',
+                icon: '🚧',
+                items: [
+                    { id: 1, text: '作業標識や保安設備は適切に配置されているか。' },
+                    { id: 2, text: '作業箇所範囲内への第三者立入禁止措置は行われているか。' },
+                    { id: 3, text: '交通警備員（人数・配置）による交通誘導は的確に行われているか。' },
+                    { id: 4, text: '資格者配置路線における検定合格警備員の配置は適切か。' }
+                ]
+            },
+            2: {
+                name: 'MH作業事項',
+                icon: '🕳️',
+                items: [
+                    { id: 5, text: '開口部に適切な墜落防止措置を行っているか。また、墜落防止対策の手順は誤りないか。' },
+                    { id: 6, text: 'MH作業前に有資格者による酸素および硫化水素等の濃度測定・換気は行われているか。' },
+                    { id: 7, text: '必要な昇降設備は施されているか。昇降中は安全ブロックを使用しているか。（2m以上）' }
+                ]
+            },
+            3: {
+                name: '柱上作業事項',
+                icon: '⚡',
+                items: [
+                    { id: 8, text: 'フルハーネス、SA付ランヤードの目視点検を行い、本ロープに体重を掛けて点検して使用しているか。' },
+                    { id: 9, text: '電柱作業における足場ボルト（締付・腐食）の確認は良いか。' },
+                    { id: 10, text: '安定した足場を確保して作業しているか。' },
+                    { id: 11, text: 'SA付ランヤードの取付箇所は安全帯取付箇所より上部に取付けているか。' },
+                    { id: 18, text: '電柱昇柱前に電柱検電を行って昇柱しているか。' }
+                ]
+            },
+            4: {
+                name: '高所作業車・車両系建設機械作業事項',
+                icon: '🏗️',
+                items: [
+                    { id: 21, text: '工事車両の歯止め、及び駐車ブレーキは確実に引かれているか。' },
+                    { id: 22, text: '高所作業車等ジャッキアップを行う車両は、坂道での車両設置は前下がりに行っているか。' },
+                    { id: 23, text: '車両系建設機械・高所作業車の用途外使用にて作業を行っていないか。' },
+                    { id: 24, text: '工事車両（車両系建設機械含む）の点検、整備はされているか。' },
+                    { id: 26, text: '高所作業車の使用時、車両に接地を施しているか。' }
+                ]
+            },
+            5: {
+                name: '夜間作業事項',
+                icon: '🌙',
+                items: [
+                    { id: 28, text: '夜間作業時、保安施設照明や現場内照明の照度は十分か。' },
+                    { id: 29, text: '夜間作業時、蛍光チョッキを着用しているか。' },
+                    { id: 30, text: '騒音・振動対策について十分配慮されているか。' }
+                ]
+            }
         };
 
         // 初期化
@@ -1531,9 +1042,6 @@
             // 今日の日付を設定
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('inspectionDate').value = today;
-            
-            // チェックリスト項目を表示（初期は空）
-            renderChecklistItems();
         });
 
         // 画面遷移
@@ -1575,44 +1083,35 @@
                 supervisor: document.getElementById('supervisor').value
             };
             
-            switchScreen('screenB', 'チェックリスト項目選択');
+            switchScreen('screenB', 'チェックリスト選択');
         }
 
-        // ツリーの開閉
-        function toggleTree(categoryId) {
-            const header = event.currentTarget;
-            const items = document.getElementById('tree-' + categoryId);
-            
-            header.classList.toggle('expanded');
-            items.classList.toggle('expanded');
-        }
-
-        // ツリーから作業を追加
-        function addWorkFromTree(workName) {
+        // チェックリストの追加
+        function addChecklist(id, name) {
             // 既に追加されているかチェック
-            if (appData.works.some(w => w.name === workName)) {
-                alert('この作業は既に追加されています');
+            if (appData.checklists.some(c => c.id === id)) {
+                alert('このチェックリストは既に追加されています');
                 return;
             }
             
-            const newWork = {
-                id: Date.now(),
-                name: workName,
+            const checklist = {
+                id: id,
+                name: name,
                 selected: false,
                 status: 'pending'
             };
             
-            appData.works.push(newWork);
+            appData.checklists.push(checklist);
             
-            // 追加ボタンをアニメーション
+            // ボタンのフィードバック
             const btn = event.target;
-            btn.textContent = '✓';
-            btn.style.background = '#27ae60';
+            btn.textContent = '✓ 追加済';
+            btn.classList.add('added');
             
             setTimeout(() => {
                 btn.textContent = '追加';
-                btn.style.background = '#4a90e2';
-            }, 1000);
+                btn.classList.remove('added');
+            }, 1500);
             
             renderChecklistItems();
         }
@@ -1621,38 +1120,48 @@
         function renderChecklistItems() {
             const container = document.getElementById('checklistItems');
             
-            if (appData.works.length === 0) {
-                // 空の状態を表示
+            if (appData.checklists.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">📋</div>
                         <div class="empty-state-text">
-                            作業が選択されていません<br>
-                            上記から作業を選択してください
+                            チェックリストが選択されていません<br>
+                            上記から必要なチェックリストを選択してください
                         </div>
                     </div>
                 `;
             } else {
                 container.innerHTML = '';
                 
-                appData.works.forEach(work => {
+                // 全完了チェック
+                const allComplete = appData.checklists.every(c => c.status === 'complete');
+                if (allComplete && appData.checklists.length > 0) {
+                    // 完了メッセージを表示
+                    const completeMsg = document.createElement('div');
+                    completeMsg.style.cssText = 'background: #d4edda; color: #155724; padding: 12px; border-radius: 8px; margin-bottom: 12px; text-align: center; font-weight: 600;';
+                    completeMsg.innerHTML = '🎉 すべてのチェックが完了しました！';
+                    container.appendChild(completeMsg);
+                }
+                
+                appData.checklists.forEach(checklist => {
+                    const def = checklistDefinitions[checklist.id];
                     const item = document.createElement('div');
                     item.className = 'checklist-item';
-                    item.onclick = () => toggleWork(work.id);
+                    item.onclick = () => toggleChecklist(checklist.id);
                     
                     let statusClass = 'status-pending';
                     let statusIcon = '□';
-                    if (work.status === 'progress') {
+                    if (checklist.status === 'progress') {
                         statusClass = 'status-progress';
                         statusIcon = '■';
-                    } else if (work.status === 'complete') {
+                    } else if (checklist.status === 'complete') {
                         statusClass = 'status-complete';
                         statusIcon = '✓';
                     }
                     
                     item.innerHTML = `
-                        <div class="checklist-checkbox ${work.selected ? 'checked' : ''}" id="check-${work.id}"></div>
-                        <div class="checklist-name">${work.name}</div>
+                        <div class="checklist-checkbox ${checklist.selected ? 'checked' : ''}" id="check-${checklist.id}"></div>
+                        <div class="checklist-name">${def.icon} ${checklist.name}</div>
                         <div class="checklist-status ${statusClass}">${statusIcon}</div>
                     `;
                     
@@ -1663,101 +1172,136 @@
             updateProgress();
         }
 
-        // 作業の選択/開始
-        function toggleWork(workId) {
-            const work = appData.works.find(w => w.id === workId);
+        // チェックリストの選択/開始
+        function toggleChecklist(checklistId) {
+            const checklist = appData.checklists.find(c => c.id === checklistId);
             
-            if (!work.selected) {
-                // 選択して画面Cへ
-                work.selected = true;
-                work.status = 'progress';
-                appData.currentWork = work;
+            if (!checklist.selected || checklist.status === 'progress' || checklist.status === 'complete') {
+                // 初回選択または既に進行中/完了済みなら画面Cへ
+                checklist.selected = true;
+                if (checklist.status === 'pending') {
+                    checklist.status = 'progress';
+                }
+                appData.currentChecklist = checklist;
                 
-                // この作業のチェック結果を初期化（まだない場合）
-                if (!appData.checkResults[workId]) {
-                    appData.checkResults[workId] = { items: {}, photoCount: 0 };
+                // チェック結果を初期化（まだない場合）
+                if (!appData.checkResults[checklistId]) {
+                    appData.checkResults[checklistId] = { items: {}, photoCount: 0 };
                 }
                 
-                document.getElementById('currentWorkName').textContent = work.name;
-                loadCheckState(workId);  // この作業の状態を読み込み
-                switchScreen('screenC', `チェック入力 - ${work.name}`);
-            } else if (work.status === 'progress' || work.status === 'complete') {
-                // 既に進行中または完了済みなら画面Cへ
-                appData.currentWork = work;
-                
-                document.getElementById('currentWorkName').textContent = work.name;
-                loadCheckState(workId);  // この作業の状態を読み込み
-                switchScreen('screenC', `チェック入力 - ${work.name}`);
+                // チェック項目を表示
+                displayCheckItems(checklistId);
+                loadCheckState(checklistId);
+                switchScreen('screenC', `チェック入力 - ${checklist.name}`);
             }
         }
 
-        // チェック状態の読み込み
-        function loadCheckState(workId) {
-            // 各チェック項目の状態を復元
-            const checkItems = document.querySelectorAll('.check-item');
+        // チェック項目の表示
+        function displayCheckItems(checklistId) {
+            const def = checklistDefinitions[checklistId];
+            const container = document.getElementById('checkItems');
+            container.innerHTML = '';
             
-            checkItems.forEach(item => {
-                const itemId = item.dataset.itemId;
-                const options = item.querySelectorAll('.check-option');
+            document.getElementById('currentChecklistName').textContent = `${def.icon} ${def.name}`;
+            
+            // カテゴリ見出し
+            const category = document.createElement('div');
+            category.className = 'check-category';
+            category.textContent = def.name + '（電気、土木共通）';
+            container.appendChild(category);
+            
+            // チェック項目
+            def.items.forEach(item => {
+                const checkItem = document.createElement('div');
+                checkItem.className = 'check-item';
+                checkItem.dataset.itemId = item.id;
                 
-                // すべてのオプションをクリア
-                options.forEach(option => {
-                    option.classList.remove('selected-ok', 'selected-warning', 'selected-ng');
-                });
+                checkItem.innerHTML = `
+                    <div class="check-item-header">
+                        <span class="check-item-text">${item.id}. ${item.text}</span>
+                    </div>
+                    <div class="check-options">
+                        <div class="check-option" onclick="selectOption(this, 'ok', ${item.id})">
+                            <span>✓</span>
+                            <span>適合</span>
+                        </div>
+                        <div class="check-option" onclick="selectOption(this, 'warning', ${item.id})">
+                            <span>⚠</span>
+                            <span>要是正</span>
+                        </div>
+                        <div class="check-option" onclick="selectOption(this, 'ng', ${item.id})">
+                            <span>✗</span>
+                            <span>不適</span>
+                        </div>
+                    </div>
+                    <button class="note-btn" onclick="addNote(${item.id})">
+                        <span>!</span>
+                        <span>指摘事項を追加</span>
+                    </button>
+                `;
                 
-                // 保存されている状態があれば適用
-                const savedState = appData.checkResults[workId];
-                if (savedState && savedState.items && savedState.items[itemId]) {
-                    const savedType = savedState.items[itemId];
-                    options.forEach(option => {
-                        if (option.onclick.toString().includes(`'${savedType}'`)) {
-                            if (savedType === 'ok') {
-                                option.classList.add('selected-ok');
-                            } else if (savedType === 'warning') {
-                                option.classList.add('selected-warning');
-                            } else if (savedType === 'ng') {
-                                option.classList.add('selected-ng');
-                            }
+                container.appendChild(checkItem);
+            });
+        }
+
+        // チェック状態の読み込み
+        function loadCheckState(checklistId) {
+            const savedState = appData.checkResults[checklistId];
+            
+            if (savedState) {
+                // 写真枚数を復元
+                document.getElementById('photoCount').textContent = savedState.photoCount || 0;
+                
+                // チェック結果を復元
+                if (savedState.items) {
+                    Object.keys(savedState.items).forEach(itemId => {
+                        const type = savedState.items[itemId];
+                        const checkItem = document.querySelector(`[data-item-id="${itemId}"]`);
+                        if (checkItem) {
+                            const options = checkItem.querySelectorAll('.check-option');
+                            options.forEach(option => {
+                                option.classList.remove('selected-ok', 'selected-warning', 'selected-ng');
+                                if (option.onclick.toString().includes(`'${type}'`)) {
+                                    option.classList.add(`selected-${type}`);
+                                }
+                            });
                         }
                     });
                 }
-            });
-            
-            // 写真枚数も復元
-            const savedState = appData.checkResults[workId];
-            if (savedState && savedState.photoCount) {
-                document.getElementById('photoCount').textContent = savedState.photoCount;
             } else {
                 document.getElementById('photoCount').textContent = '0';
             }
         }
 
-        // 新規作業追加（その他の作業）
-        function addNewWork() {
-            const name = prompt('その他の作業名を入力してください\n（例：仮設電源設置、資材搬入、現場清掃など）');
-            if (name) {
-                // 既に追加されているかチェック
-                if (appData.works.some(w => w.name === name)) {
-                    alert('この作業は既に追加されています');
-                    return;
+        // チェック項目の選択
+        function selectOption(element, type, itemId) {
+            // 同じグループ内の選択をクリア
+            const options = element.parentElement.querySelectorAll('.check-option');
+            options.forEach(opt => {
+                opt.classList.remove('selected-ok', 'selected-warning', 'selected-ng');
+            });
+            
+            // 選択状態を設定
+            element.classList.add(`selected-${type}`);
+            
+            // 現在のチェックリストの結果を保存
+            if (appData.currentChecklist) {
+                const checklistId = appData.currentChecklist.id;
+                if (!appData.checkResults[checklistId]) {
+                    appData.checkResults[checklistId] = { items: {}, photoCount: 0 };
                 }
-                
-                const newWork = {
-                    id: Date.now(),
-                    name: name,
-                    selected: false,
-                    status: 'pending'
-                };
-                appData.works.push(newWork);
-                renderChecklistItems();
+                appData.checkResults[checklistId].items[itemId] = type;
             }
+            
+            // アニメーション
+            element.classList.add('pulse');
+            setTimeout(() => element.classList.remove('pulse'), 500);
         }
 
         // チェック完了
         function completeCheck() {
-            if (appData.currentWork) {
-                // 現在の作業のチェック結果を確認
-                const workId = appData.currentWork.id;
+            if (appData.currentChecklist) {
+                const checklistId = appData.currentChecklist.id;
                 
                 // チェック項目の完了状況を確認
                 const checkItems = document.querySelectorAll('.check-item');
@@ -1775,7 +1319,7 @@
                     return;
                 }
                 
-                appData.currentWork.status = 'complete';
+                appData.currentChecklist.status = 'complete';
                 
                 // アニメーション
                 const btn = event.target;
@@ -1783,15 +1327,16 @@
                 
                 setTimeout(() => {
                     // 画面Bに戻る
-                    switchScreen('screenB', 'チェックリスト項目選択');
+                    switchScreen('screenB', 'チェックリスト選択');
                     renderChecklistItems();
                     
-                    // 全完了チェック
-                    const allComplete = appData.works.every(w => w.status === 'complete');
-                    if (allComplete && appData.works.length > 0) {
-                        setTimeout(() => {
-                            goToScreenD();
-                        }, 500);
+                    // 全完了時にメッセージを表示（自動遷移はしない）
+                    const allComplete = appData.checklists.every(c => c.status === 'complete');
+                    if (allComplete && appData.checklists.length > 0) {
+                        // ボタンを視覚的に強調
+                        const finishBtn = document.getElementById('finishBtn');
+                        finishBtn.classList.add('pulse');
+                        setTimeout(() => finishBtn.classList.remove('pulse'), 1000);
                     }
                 }, 300);
             }
@@ -1799,25 +1344,154 @@
 
         // 進捗更新
         function updateProgress() {
-            const total = appData.works.length;
-            const completed = appData.works.filter(w => w.status === 'complete').length;
+            const total = appData.checklists.length;
+            const completed = appData.checklists.filter(c => c.status === 'complete').length;
             const percentage = total > 0 ? (completed / total * 100) : 0;
             
             document.getElementById('progressBar').style.width = percentage + '%';
             document.getElementById('progressText').textContent = `${completed}/${total}`;
             
-            // 完了ボタンの有効化
+            // 完了ボタンの有効化とテキスト変更
             const finishBtn = document.getElementById('finishBtn');
             if (percentage === 100 && total > 0) {
                 finishBtn.disabled = false;
+                finishBtn.innerHTML = `
+                    <span>✅ すべて完了！総括入力へ</span>
+                    <span>▶</span>
+                `;
+                finishBtn.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
             } else {
                 finishBtn.disabled = true;
+                finishBtn.innerHTML = `
+                    <span>すべて完了して次へ</span>
+                    <span>▶</span>
+                `;
+                finishBtn.style.background = '';
             }
         }
 
         // B → D
         function goToScreenD() {
+            // 指摘事項を自動生成（モック用）
+            generateIssuesFromChecks();
+            
+            // 総合コメントのサンプルテキストを設定（モック用）
+            const comment = document.getElementById('generalComment');
+            if (issueCount > 0) {
+                comment.value = `本日の巡視において、${issueCount}件の指摘事項を確認しました。\n\n主な指摘内容：\n・保安対策の徹底が必要です\n・作業員への安全教育を再度実施してください\n・次回巡視時に改善状況を確認します\n\n全体的に安全意識は向上していますが、基本的な安全ルールの遵守を徹底してください。`;
+            } else {
+                comment.value = '本日の巡視において、特に大きな問題は確認されませんでした。\n引き続き安全作業の継続をお願いします。';
+            }
+            
             switchScreen('screenD', '総括入力');
+        }
+
+        // チェック結果から指摘事項を生成
+        function generateIssuesFromChecks() {
+            const tbody = document.getElementById('issueTableBody');
+            tbody.innerHTML = ''; // クリア
+            
+            issueCount = 0;
+            
+            // 各チェックリストの結果を確認
+            appData.checklists.forEach(checklist => {
+                const checklistId = checklist.id;
+                const def = checklistDefinitions[checklistId];
+                const results = appData.checkResults[checklistId];
+                
+                if (results && results.items) {
+                    // 要是正・不適の項目を指摘事項として追加
+                    Object.keys(results.items).forEach(itemId => {
+                        const result = results.items[itemId];
+                        if (result === 'warning' || result === 'ng') {
+                            issueCount++;
+                            const item = def.items.find(i => i.id == itemId);
+                            
+                            // デモ用の作業者名をランダムに選択
+                            const workers = ['田中太郎', '佐藤次郎', '鈴木三郎', '高橋四郎', '山田五郎'];
+                            const randomWorker = workers[Math.floor(Math.random() * workers.length)];
+                            
+                            // 区分を決定
+                            const severity = result === 'ng' ? '要是正' : '注意';
+                            
+                            // 指摘内容を生成（ノートがあればそれを使用）
+                            let issueText = '';
+                            if (results.notes && results.notes[itemId]) {
+                                issueText = results.notes[itemId];
+                            } else if (item) {
+                                // チェック項目のテキストから簡潔な指摘内容を生成
+                                if (item.text.includes('ヘルメット')) {
+                                    issueText = 'ヘルメット未着用の作業員あり';
+                                } else if (item.text.includes('安全帯')) {
+                                    issueText = '安全帯の使用方法に不備あり';
+                                } else if (item.text.includes('照明')) {
+                                    issueText = '作業エリアの照度が基準値以下';
+                                } else if (item.text.includes('標識')) {
+                                    issueText = '保安標識の配置位置が不適切';
+                                } else if (item.text.includes('立入禁止')) {
+                                    issueText = '第三者立入禁止措置が不完全';
+                                } else if (item.text.includes('酸素')) {
+                                    issueText = '酸素濃度測定の記録不備';
+                                } else if (item.text.includes('車両')) {
+                                    issueText = '車両の歯止め未実施を確認';
+                                } else if (item.text.includes('ミーティング')) {
+                                    issueText = '安全ミーティングの記録不備';
+                                } else if (item.text.includes('蛍光チョッキ')) {
+                                    issueText = '夜間作業時の蛍光チョッキ未着用';
+                                } else {
+                                    issueText = `${def.name}での確認事項に不備あり`;
+                                }
+                            }
+                            
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${issueCount}</td>
+                                <td>
+                                    <select>
+                                        <option ${severity === '要是正' ? 'selected' : ''}>要是正</option>
+                                        <option ${severity === '注意' ? 'selected' : ''}>注意</option>
+                                        <option>改善</option>
+                                    </select>
+                                </td>
+                                <td><input type="text" value="${randomWorker}"></td>
+                                <td><input type="text" value="${def.name.substring(0, 5)}"></td>
+                                <td><input type="text" value="${issueText}"></td>
+                                <td><button class="delete-btn" onclick="deleteIssue(this)">🗑</button></td>
+                            `;
+                            tbody.appendChild(row);
+                        }
+                    });
+                }
+            });
+            
+            // 指摘事項がない場合は、デモ用のサンプルデータを追加
+            if (issueCount === 0) {
+                const sampleIssues = [
+                    { severity: '注意', worker: '田中太郎', category: '保安対策', content: '作業区画の明示をより明確にすること' },
+                    { severity: '改善', worker: '佐藤次郎', category: 'MH作業', content: '昇降設備の使用前点検を徹底すること' },
+                    { severity: '注意', worker: '鈴木三郎', category: '施工体制', content: 'KY活動記録の記入を確実に行うこと' }
+                ];
+                
+                sampleIssues.forEach(issue => {
+                    issueCount++;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${issueCount}</td>
+                        <td>
+                            <select>
+                                <option ${issue.severity === '要是正' ? 'selected' : ''}>要是正</option>
+                                <option ${issue.severity === '注意' ? 'selected' : ''}>注意</option>
+                                <option ${issue.severity === '改善' ? 'selected' : ''}>改善</option>
+                            </select>
+                        </td>
+                        <td><input type="text" value="${issue.worker}"></td>
+                        <td><input type="text" value="${issue.category}"></td>
+                        <td><input type="text" value="${issue.content}"></td>
+                        <td><button class="delete-btn" onclick="deleteIssue(this)">🗑</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
         }
 
         // 作業者の追加/削除
@@ -1837,99 +1511,108 @@
         }
 
         // 指摘事項の追加/削除
-        let issueCount = 1;
+        let issueCount = 0;
         function addIssue() {
             issueCount++;
             const tbody = document.getElementById('issueTableBody');
+            
+            // デモ用：ランダムな作業者名を設定
+            const workers = ['', '田中太郎', '佐藤次郎', '鈴木三郎', '高橋四郎', '山田五郎'];
+            const randomWorker = workers[Math.floor(Math.random() * workers.length)];
+            
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${issueCount}</td>
                 <td>
                     <select>
                         <option>要是正</option>
-                        <option>注意</option>
+                        <option selected>注意</option>
                         <option>改善</option>
                     </select>
                 </td>
-                <td><input type="text" placeholder="氏名"></td>
-                <td><input type="text" placeholder="分類"></td>
-                <td><input type="text" placeholder="指摘内容"></td>
+                <td><input type="text" placeholder="氏名" value="${randomWorker}"></td>
+                <td><input type="text" placeholder="分類" value=""></td>
+                <td><input type="text" placeholder="指摘内容を入力してください" value=""></td>
                 <td><button class="delete-btn" onclick="deleteIssue(this)">🗑</button></td>
             `;
             tbody.appendChild(row);
+            
+            // 追加した行にフォーカス
+            const newInput = row.querySelector('td:last-child').previousElementSibling.querySelector('input');
+            if (newInput) {
+                newInput.focus();
+            }
         }
 
         function deleteIssue(btn) {
             btn.closest('tr').remove();
-        }
-
-        // チェック項目の選択
-        function selectOption(element, type, itemId) {
-            // 同じグループ内の選択をクリア
-            const options = element.parentElement.querySelectorAll('.check-option');
-            options.forEach(opt => {
-                opt.classList.remove('selected-ok', 'selected-warning', 'selected-ng');
+            // 番号を振り直し
+            const rows = document.querySelectorAll('#issueTableBody tr');
+            rows.forEach((row, index) => {
+                row.querySelector('td:first-child').textContent = index + 1;
             });
-            
-            // 選択状態を設定
-            if (type === 'ok') {
-                element.classList.add('selected-ok');
-            } else if (type === 'warning') {
-                element.classList.add('selected-warning');
-            } else if (type === 'ng') {
-                element.classList.add('selected-ng');
-            }
-            
-            // 現在の作業のチェック結果を保存
-            if (appData.currentWork) {
-                const workId = appData.currentWork.id;
-                if (!appData.checkResults[workId]) {
-                    appData.checkResults[workId] = { items: {} };
-                }
-                appData.checkResults[workId].items[itemId] = type;
-            }
-            
-            // アニメーション
-            element.classList.add('pulse');
-            setTimeout(() => element.classList.remove('pulse'), 500);
+            issueCount = rows.length;
         }
 
         // 写真機能（ダミー）
         function takePhoto() {
-            if (appData.currentWork) {
-                const workId = appData.currentWork.id;
-                if (!appData.checkResults[workId]) {
-                    appData.checkResults[workId] = { items: {}, photoCount: 0 };
+            if (appData.currentChecklist) {
+                const checklistId = appData.currentChecklist.id;
+                if (!appData.checkResults[checklistId]) {
+                    appData.checkResults[checklistId] = { items: {}, photoCount: 0 };
                 }
-                appData.checkResults[workId].photoCount = (appData.checkResults[workId].photoCount || 0) + 1;
-                document.getElementById('photoCount').textContent = appData.checkResults[workId].photoCount;
+                appData.checkResults[checklistId].photoCount = (appData.checkResults[checklistId].photoCount || 0) + 1;
+                document.getElementById('photoCount').textContent = appData.checkResults[checklistId].photoCount;
                 alert('📷 写真を撮影しました（デモ）');
             }
         }
 
         function viewPhotos() {
-            if (appData.currentWork) {
-                const workId = appData.currentWork.id;
-                const photoCount = appData.checkResults[workId]?.photoCount || 0;
+            if (appData.currentChecklist) {
+                const checklistId = appData.currentChecklist.id;
+                const photoCount = appData.checkResults[checklistId]?.photoCount || 0;
                 alert(`📸 ${photoCount}枚の写真があります（デモ）`);
             }
         }
 
         // モーダル
-        function showInfo(text) {
-            document.getElementById('infoContent').textContent = text;
-            document.getElementById('infoModal').classList.add('active');
-        }
-
         function addNote(itemId) {
-            document.getElementById('noteModal').classList.add('active');
-            // itemIdを保存して後で使用可能
-            document.getElementById('noteModal').dataset.itemId = itemId;
+            const modal = document.getElementById('noteModal');
+            modal.classList.add('active');
+            modal.dataset.itemId = itemId;
+            
+            // チェックリストとアイテムの情報を保存
+            modal.dataset.checklistId = appData.currentChecklist.id;
+            
+            // 既存のメモがあれば表示（モック用なので空）
+            const textarea = modal.querySelector('textarea');
+            textarea.value = '';
         }
 
         function saveNote() {
+            const modal = document.getElementById('noteModal');
+            const textarea = modal.querySelector('textarea');
+            const note = textarea.value;
+            
+            if (note) {
+                // 指摘事項を保存（モック用）
+                const checklistId = modal.dataset.checklistId;
+                const itemId = modal.dataset.itemId;
+                
+                if (!appData.checkResults[checklistId]) {
+                    appData.checkResults[checklistId] = { items: {}, photoCount: 0, notes: {} };
+                }
+                if (!appData.checkResults[checklistId].notes) {
+                    appData.checkResults[checklistId].notes = {};
+                }
+                
+                appData.checkResults[checklistId].notes[itemId] = note;
+                
+                // 視覚的フィードバック
+                alert(`指摘事項を保存しました:\n${note}`);
+            }
+            
             closeModal('noteModal');
-            alert('指摘事項を保存しました（デモ）');
         }
 
         function closeModal(modalId) {
