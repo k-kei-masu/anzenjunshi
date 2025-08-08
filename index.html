@@ -248,6 +248,97 @@
             background: #f8f9fa;
         }
 
+        /* ツリー選択 */
+        .tree-selector {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .tree-category {
+            margin-bottom: 12px;
+        }
+
+        .tree-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: #f0f8ff;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            color: #2c5aa8;
+        }
+
+        .tree-header:active {
+            background: #e0f0ff;
+        }
+
+        .tree-arrow {
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .tree-header.expanded .tree-arrow {
+            transform: rotate(90deg);
+        }
+
+        .tree-items {
+            display: none;
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        .tree-items.expanded {
+            display: block;
+        }
+
+        .tree-item {
+            padding: 8px 12px;
+            margin-bottom: 4px;
+            border-left: 3px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tree-item:hover {
+            background: #f8f9fa;
+            border-left-color: #4a90e2;
+        }
+
+        .tree-item-add {
+            padding: 4px 12px;
+            background: #4a90e2;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
         .checklist-checkbox {
             width: 24px;
             height: 24px;
@@ -438,27 +529,6 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-        }
-
-        /* Tips */
-        .tips-section {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 16px;
-        }
-
-        .tips-title {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .tips-content {
-            font-size: 12px;
-            line-height: 1.6;
-            color: #555;
         }
 
         /* 指摘一覧 */
@@ -731,12 +801,110 @@
             </div>
         </div>
 
+        <!-- ツリー選択 -->
+        <div class="tree-selector">
+            <div class="card-title">
+                <span>🔍</span>
+                <span>作業を選択</span>
+            </div>
+            
+            <div class="tree-category">
+                <div class="tree-header" onclick="toggleTree('foundation')">
+                    <span class="tree-arrow">▶</span>
+                    <span>基礎工事</span>
+                </div>
+                <div class="tree-items" id="tree-foundation">
+                    <div class="tree-item">
+                        <span>掘削作業</span>
+                        <button class="tree-item-add" onclick="addWorkFromTree('掘削作業')">追加</button>
+                    </div>
+                    <div class="tree-item">
+                        <span>配筋作業</span>
+                        <button class="tree-item-add" onclick="addWorkFromTree('配筋作業')">追加</button>
+                    </div>
+                    <div class="tree-item">
+                        <span>型枠組立</span>
+                        <button class="tree-item-add" onclick="addWorkFromTree('型枠組立')">追加</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tree-category">
+                <div class="tree-header" onclick="toggleTree('frame')">
+                    <span class="tree-arrow">▶</span>
+                    <span>躯体工事</span>
+                </div>
+                <div class="tree-items" id="tree-frame">
+                    <div class="tree-item">
+                        <span>鉄骨建方</span>
+                        <button class="tree-item-add" onclick="addWorkFromTree('鉄骨建方')">追加</button>
+                    </div>
+                    <div class="tree-item">
+                        <span>コンクリート打設</span>
+                        <button class="tree-item-add" onclick="addWorkFromTree('コンクリート打設')">追加</button>
+                    </div>
+                    <div class="tree-item">
+                        <span>デッキプレート敷設</span>
+                        <button class="tree-item-add" onclick="addWorkFromTree('デッキプレート敷設')">追加</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tree-category">
+                <div class="tree-header" onclick="toggleTree('finishing')">
+                    <span class="tree-arrow">▶</span>
+                    <span>仕上工事</span>
+                </div>
+                <div class="tree-items" id="tree-finishing">
+                    <div class="tree-item">
+                        <span>外壁工事</span>
+                        <button class="tree-item-add" onclick="addWorkFromTree('外壁工事')">追加</button>
+                    </div>
+                    <div class="tree-item">
+                        <span>防水工事</span>
+                        <button class="tree-item-add" onclick="addWorkFromTree('防水工事')">追加</button>
+                    </div>
+                    <div class="tree-item">
+                        <span>内装工事</span>
+                        <button class="tree-item-add" onclick="addWorkFromTree('内装工事')">追加</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tree-category">
+                <div class="tree-header" onclick="toggleTree('equipment')">
+                    <span class="tree-arrow">▶</span>
+                    <span>設備工事</span>
+                </div>
+                <div class="tree-items" id="tree-equipment">
+                    <div class="tree-item">
+                        <span>電気設備工事</span>
+                        <button class="tree-item-add" onclick="addWorkFromTree('電気設備工事')">追加</button>
+                    </div>
+                    <div class="tree-item">
+                        <span>給排水設備工事</span>
+                        <button class="tree-item-add" onclick="addWorkFromTree('給排水設備工事')">追加</button>
+                    </div>
+                    <div class="tree-item">
+                        <span>空調設備工事</span>
+                        <button class="tree-item-add" onclick="addWorkFromTree('空調設備工事')">追加</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="checklistItems">
-            <!-- 動的に生成 -->
+            <div class="empty-state" id="emptyState">
+                <div class="empty-state-icon">📋</div>
+                <div class="empty-state-text">
+                    作業が選択されていません<br>
+                    上記から作業を選択してください
+                </div>
+            </div>
         </div>
 
         <button class="btn btn-secondary btn-block" onclick="addNewWork()" style="margin-bottom: 12px;">
-            <span>＋ 新規作業を追加</span>
+            <span>＋ カスタム作業を追加</span>
         </button>
 
         <button class="btn btn-success btn-block" id="finishBtn" onclick="goToScreenD()" disabled>
@@ -846,14 +1014,6 @@
                     <span>!</span>
                     <span>指摘事項を追加</span>
                 </button>
-            </div>
-        </div>
-
-        <div class="tips-section">
-            <div class="tips-title">💡 Tips</div>
-            <div class="tips-content">
-                高所作業では「墜落制止用器具」の使用が法令で義務付けられています。<br>
-                フルハーネス型を原則とし、高さ6.75m以下ではベルト型も使用可能です。
             </div>
         </div>
 
@@ -971,13 +1131,9 @@
         // データ管理
         let appData = {
             basicInfo: {},
-            works: [
-                { id: 1, name: '足場組立作業', selected: false, status: 'pending' },
-                { id: 2, name: '鉄筋組立作業', selected: false, status: 'pending' },
-                { id: 3, name: 'コンクリート打設', selected: false, status: 'pending' }
-            ],
+            works: [],  // 初期は空配列
             currentWork: null,
-            checkResults: {},
+            checkResults: {},  // 作業IDごとにチェック結果を保存
             issues: [],
             photoCount: 0
         };
@@ -988,7 +1144,7 @@
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('inspectionDate').value = today;
             
-            // チェックリスト項目を表示
+            // チェックリスト項目を表示（初期は空）
             renderChecklistItems();
         });
 
@@ -1034,34 +1190,87 @@
             switchScreen('screenB', 'チェックリスト項目選択');
         }
 
+        // ツリーの開閉
+        function toggleTree(categoryId) {
+            const header = event.currentTarget;
+            const items = document.getElementById('tree-' + categoryId);
+            
+            header.classList.toggle('expanded');
+            items.classList.toggle('expanded');
+        }
+
+        // ツリーから作業を追加
+        function addWorkFromTree(workName) {
+            // 既に追加されているかチェック
+            if (appData.works.some(w => w.name === workName)) {
+                alert('この作業は既に追加されています');
+                return;
+            }
+            
+            const newWork = {
+                id: Date.now(),
+                name: workName,
+                selected: false,
+                status: 'pending'
+            };
+            
+            appData.works.push(newWork);
+            
+            // 追加ボタンをアニメーション
+            const btn = event.target;
+            btn.textContent = '✓';
+            btn.style.background = '#27ae60';
+            
+            setTimeout(() => {
+                btn.textContent = '追加';
+                btn.style.background = '#4a90e2';
+            }, 1000);
+            
+            renderChecklistItems();
+        }
+
         // チェックリスト項目の表示
         function renderChecklistItems() {
             const container = document.getElementById('checklistItems');
-            container.innerHTML = '';
             
-            appData.works.forEach(work => {
-                const item = document.createElement('div');
-                item.className = 'checklist-item';
-                item.onclick = () => toggleWork(work.id);
-                
-                let statusClass = 'status-pending';
-                let statusIcon = '□';
-                if (work.status === 'progress') {
-                    statusClass = 'status-progress';
-                    statusIcon = '■';
-                } else if (work.status === 'complete') {
-                    statusClass = 'status-complete';
-                    statusIcon = '✓';
-                }
-                
-                item.innerHTML = `
-                    <div class="checklist-checkbox ${work.selected ? 'checked' : ''}" id="check-${work.id}"></div>
-                    <div class="checklist-name">${work.name}</div>
-                    <div class="checklist-status ${statusClass}">${statusIcon}</div>
+            if (appData.works.length === 0) {
+                // 空の状態を表示
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div class="empty-state-text">
+                            作業が選択されていません<br>
+                            上記から作業を選択してください
+                        </div>
+                    </div>
                 `;
+            } else {
+                container.innerHTML = '';
                 
-                container.appendChild(item);
-            });
+                appData.works.forEach(work => {
+                    const item = document.createElement('div');
+                    item.className = 'checklist-item';
+                    item.onclick = () => toggleWork(work.id);
+                    
+                    let statusClass = 'status-pending';
+                    let statusIcon = '□';
+                    if (work.status === 'progress') {
+                        statusClass = 'status-progress';
+                        statusIcon = '■';
+                    } else if (work.status === 'complete') {
+                        statusClass = 'status-complete';
+                        statusIcon = '✓';
+                    }
+                    
+                    item.innerHTML = `
+                        <div class="checklist-checkbox ${work.selected ? 'checked' : ''}" id="check-${work.id}"></div>
+                        <div class="checklist-name">${work.name}</div>
+                        <div class="checklist-status ${statusClass}">${statusIcon}</div>
+                    `;
+                    
+                    container.appendChild(item);
+                });
+            }
             
             updateProgress();
         }
@@ -1076,20 +1285,48 @@
                 work.status = 'progress';
                 appData.currentWork = work;
                 
+                // この作業のチェック結果を初期化（まだない場合）
+                if (!appData.checkResults[workId]) {
+                    appData.checkResults[workId] = {};
+                }
+                
                 document.getElementById('currentWorkName').textContent = work.name;
+                loadCheckState(workId);  // この作業の状態を読み込み
                 switchScreen('screenC', `チェック入力 - ${work.name}`);
             } else if (work.status === 'progress') {
                 // 既に進行中なら画面Cへ
                 appData.currentWork = work;
                 document.getElementById('currentWorkName').textContent = work.name;
+                loadCheckState(workId);  // この作業の状態を読み込み
                 switchScreen('screenC', `チェック入力 - ${work.name}`);
             }
         }
 
-        // 新規作業追加
+        // チェック状態の読み込み
+        function loadCheckState(workId) {
+            // 各チェック項目の状態を復元
+            const checkOptions = document.querySelectorAll('.check-option');
+            checkOptions.forEach(option => {
+                option.classList.remove('selected-ok', 'selected-warning', 'selected-ng');
+            });
+            
+            // 保存されている状態があれば適用
+            const savedState = appData.checkResults[workId];
+            if (savedState && savedState.checks) {
+                // ここで保存された状態を復元する処理を追加可能
+            }
+        }
+
+        // 新規作業追加（カスタム）
         function addNewWork() {
             const name = prompt('新しい作業名を入力してください');
             if (name) {
+                // 既に追加されているかチェック
+                if (appData.works.some(w => w.name === name)) {
+                    alert('この作業は既に追加されています');
+                    return;
+                }
+                
                 const newWork = {
                     id: Date.now(),
                     name: name,
@@ -1104,6 +1341,31 @@
         // チェック完了
         function completeCheck() {
             if (appData.currentWork) {
+                // 現在の作業のチェック結果を保存
+                const workId = appData.currentWork.id;
+                const checkItems = document.querySelectorAll('.check-item');
+                const results = [];
+                
+                checkItems.forEach((item, index) => {
+                    const selectedOption = item.querySelector('.check-option.selected-ok, .check-option.selected-warning, .check-option.selected-ng');
+                    if (selectedOption) {
+                        let result = 'none';
+                        if (selectedOption.classList.contains('selected-ok')) result = 'ok';
+                        else if (selectedOption.classList.contains('selected-warning')) result = 'warning';
+                        else if (selectedOption.classList.contains('selected-ng')) result = 'ng';
+                        
+                        results.push({
+                            itemIndex: index,
+                            result: result
+                        });
+                    }
+                });
+                
+                appData.checkResults[workId] = {
+                    checks: results,
+                    photoCount: appData.photoCount
+                };
+                
                 appData.currentWork.status = 'complete';
                 
                 // アニメーション
@@ -1117,7 +1379,7 @@
                     
                     // 全完了チェック
                     const allComplete = appData.works.every(w => w.status === 'complete');
-                    if (allComplete) {
+                    if (allComplete && appData.works.length > 0) {
                         setTimeout(() => {
                             goToScreenD();
                         }, 500);
@@ -1137,7 +1399,7 @@
             
             // 完了ボタンの有効化
             const finishBtn = document.getElementById('finishBtn');
-            if (percentage === 100) {
+            if (percentage === 100 && total > 0) {
                 finishBtn.disabled = false;
             } else {
                 finishBtn.disabled = true;
